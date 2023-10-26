@@ -13,7 +13,7 @@ Welcome to the Epoch Archive Backup & Restore guide. This README is designed to 
 
   Clone the repo and prepare the binary:
   
-  ```bash
+  ```
   cd ~
   git clone https://github.com/0LNetworkCommunity/epoch-archive-testnet
   cd ~/epoch-archive-testnet
@@ -24,25 +24,27 @@ Welcome to the Epoch Archive Backup & Restore guide. This README is designed to 
 ## Restoring to the latest version of the 0L Network public backup
 
 ### This is most likely all you will need to restore and start/resume syncing:
-    ```bash
+
+  ```
     cd ~/epoch-archive-testnet
     make restore-all
-    ```
+  ```
+
 
 ## Here are some other tools you can make use of
   
-2. **Wipe Existing Database**:
+1. **Wipe Existing Database**:
     ```bash
     make wipe-db
     ```
 
-3. **Restore Genesis Data**:
+2. **Restore Genesis Data**:
     ```bash
     make restore-genesis
     ```
 
-4. **Restore to a Specific Version**:
-    ```bash
+3. **Restore to a Specific Version**:
+    ```
     make VERSION_START=[db_starting_transaction] VERSION=[db_target_transaction] restore-latest
     ```
 
@@ -50,58 +52,58 @@ Welcome to the Epoch Archive Backup & Restore guide. This README is designed to 
 ## Creating and Maintaining Backups
 
 1. **Prepare Archive Path**:
-    ```bash
+    ```
     make prep-archive-path
     ```
 
 2. **Backup Genesis Data**:
-    ```bash
+    ```
     make backup-genesis
     ```
 
 3. **Continuous Backup**:
-    ```bash
+    ```
     make backup-continuous
     ```
 
 4. **Backup by Epoch**:
-    ```bash
+    ```
     make backup-epoch
     ```
 
 5. **Backup State Snapshot**:
-    ```bash
+    ```
     make backup-snapshot
     ```
 
 6. **Backup Transactions**:
-    ```bash
+    ```
     make backup-transaction
     ```
 
 7. **Setup Git for Backup**:
-    ```bash
+    ```
     make git-setup
     ```
 
 8. **Start Continuous Backup**:
-    ```bash
+    ```
     make start-continuous
     ```
 
 9. **Stop Continuous Backup**:
-    ```bash
+    ```
     make stop-continuous
     ```
 
 10. **Backup Logging Cleanup**:
-    ```bash
+    ```
     make log-cleanup
     ```
 
 11. **Scheduled Tasks**:
     This is what we use to continually provide public backups as they become available:
-    ```bash
+    ```
     make cron
     ```
 

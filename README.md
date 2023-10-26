@@ -1,4 +1,4 @@
-# TESTNET: Epoch Archive Backup & Restore Guide `epoch-archive-testnet`
+# Epoch Archive Backup & Restore Guide `epoch-archive-testnet`
 
 Welcome to the Epoch Archive Backup & Restore guide. This README is designed to provide you with a comprehensive walkthrough to manage backups and restoration for your system using the provided Makefile.
 

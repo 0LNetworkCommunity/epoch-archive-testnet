@@ -12,17 +12,18 @@ Welcome to the Epoch Archive Backup & Restore guide. This README is designed to 
 ## Getting started
 
   Clone the repo and prepare the binary:
-  ```bash
+  
+  ``bash
   cd ~
   git clone https://github.com/0LNetworkCommunity/epoch-archive-testnet
   cd ~/epoch-archive-testnet
   make bins
-  ```
+  ``
 
 
-## Restoring to the latest version public backup
+## Restoring to the latest version of the 0L Network public backup
 
-### Restoring from the latest backup is most likely all you will need to start syncing:
+### This is most likely all you will need to restore and start/resume syncing:
     ```bash
     cd ~/epoch-archive-testnet
     make restore-all

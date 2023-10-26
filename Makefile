@@ -4,11 +4,11 @@
 SHELL=/usr/bin/env bash
 
 ifndef GIT_ORG
-GIT_ORG = 0LNetworkCommunity
+GIT_ORG=0LNetworkCommunity
 endif
 
 ifndef GIT_REPO
-GIT_REPO = epoch-archive-testnet
+GIT_REPO=epoch-archive-testnet
 endif
 
 ifndef BIN_PATH

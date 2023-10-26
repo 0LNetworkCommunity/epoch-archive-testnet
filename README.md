@@ -1,10 +1,12 @@
-# Epoch Archive Backup & Restore Guide `epoch-archive-testnet`
+# Epoch Archive Backup & Restore Guide
 
-Welcome to the Epoch Archive Backup & Restore guide. This README is designed to provide you with a comprehensive walkthrough to manage backups and restoration for your system using the provided Makefile.
+`epoch-archive-testnet`
+
+Welcome to the Epoch Archive Backup & Restore guide. This README is designed to provide a comprehensive walkthrough to manage 0l Network node backups and restoration for your system using the provided Makefile.
 
 ## Prerequisites
 
-- Ensure you have the necessary tools installed, such as the latest `libra-framework`, `git`, `jq`, `bc`, `curl`, and `awk`.
+- Ensure you have the necessary tools installed, such as the latest
 - The Makefile is designed for libra-framework v6.9.x (soon v7) Ensure you are using the correct version.
 
 ## Getting started

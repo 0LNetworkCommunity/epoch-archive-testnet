@@ -164,16 +164,16 @@ backup-genesis:
 	mkdir -p ${REPO_PATH}/genesis && cp -f ${GENESIS_PATH}/genesis.blob ${REPO_PATH}/genesis/genesis.blob && cp -f ${GENESIS_PATH}/waypoint.txt ${REPO_PATH}/genesis/waypoint.txt
 
 backup-continuous: prep-archive-path backup-genesis
-	${BIN_PATH}/diem-db-tool backup continuously --backup-service-address ${BACKUP_SERVICE_URL}:6186 --state-snapshot-interval-epochs ${BACKUP_EPOCH_FREQ} --transaction-batch-size ${BACKUP_TRANS_FREQ} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool backup continuously --backup-service-address ${BACKUP_SERVICE_URL}:6186 --state-snapshot-interval-epochs ${BACKUP_EPOCH_FREQ} --transaction-batch-size ${BACKUP_TRANS_FREQ} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 backup-epoch: prep-archive-path
-	${BIN_PATH}/diem-db-tool backup oneoff --backup-service-address ${BACKUP_SERVICE_URL}:6186 epoch-ending --start-epoch ${LAST_EPOCH} --end-epoch ${EPOCH_NOW} --target-db-dir ${DB_PATH} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool backup oneoff --backup-service-address ${BACKUP_SERVICE_URL}:6186 epoch-ending --start-epoch ${LAST_EPOCH} --end-epoch ${EPOCH_NOW} --target-db-dir ${DB_PATH} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 backup-snapshot: prep-archive-path
-	${BIN_PATH}/diem-db-tool backup oneoff --backup-service-address ${BACKUP_SERVICE_URL}:6186 state-snapshot --target-db-dir ${DB_PATH} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool backup oneoff --backup-service-address ${BACKUP_SERVICE_URL}:6186 state-snapshot --target-db-dir ${DB_PATH} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 backup-transaction: prep-archive-path
-	${BIN_PATH}/diem-db-tool backup oneoff --backup-service-address ${BACKUP_SERVICE_URL}:6186 transaction --start-version ${VERSION} --num_transactions ${BACKUP_TRANS_FREQ} --target-db-dir ${DB_PATH}--command-adapter-config ${REPO_PATH}/epoch-archive.yaml
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool backup oneoff --backup-service-address ${BACKUP_SERVICE_URL}:6186 transaction --start-version ${VERSION} --num_transactions ${BACKUP_TRANS_FREQ} --target-db-dir ${DB_PATH}--command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 backup-version: backup-epoch backup-snapshot backup-transaction
 

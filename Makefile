@@ -12,7 +12,7 @@ GIT_REPO=epoch-archive-testnet
 endif
 
 ifndef BIN_PATH
-BIN_PATH=~/bin
+BIN_PATH=/usr/bin
 endif
 
 ifndef SOURCE_PATH

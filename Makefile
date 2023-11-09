@@ -152,6 +152,7 @@ wipe-backups:
 	git filter-branch -f --index-filter 'git rm --cached --ignore-unmatch -r genesis' -- --all
 	@$(MAKE) git-gc
 	@$(MAKE) prep-archive-path
+	git add -A
 	git commit -m "wiped backups"
 	git push origin
 

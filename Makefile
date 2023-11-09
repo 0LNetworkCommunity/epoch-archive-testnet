@@ -145,13 +145,13 @@ check:
 
 wipe-backups:
 	cd ${REPO_PATH}
-	rm -rf ${ARCHIVE_PATH} && git filter-branch --index-filter 'git rm --cached --ignore-unmatch -r ${ARCHIVE_PATH}' -- --all
+	git filter-branch --index-filter 'git rm --cached --ignore-unmatch -r ${ARCHIVE_PATH}' -- --all
 	@$(MAKE) git-gc
-	rm -rf ${REPO_PATH}/genesis && git filter-branch --index-filter 'git rm --cached --ignore-unmatch -r ${REPO_PATH}/genesis' -- --all
+	git filter-branch --index-filter 'git rm --cached --ignore-unmatch -r ${REPO_PATH}/genesis' -- --all
 	@$(MAKE) git-gc
-	rm -rf ${REPO_PATH}/metacache  && git filter-branch --index-filter 'git rm --cached --ignore-unmatch -r ${REPO_PATH}/metacache' -- --all
+	git filter-branch --index-filter 'git rm --cached --ignore-unmatch -r ${REPO_PATH}/metacache' -- --all
 	@$(MAKE) git-gc
-	rm -rf ${REPO_PATH}/backup.log  && git filter-branch --index-filter 'git rm --cached --ignore-unmatch -r ${REPO_PATH}/backup.log' -- --all
+	git filter-branch --index-filter 'git rm --cached --ignore-unmatch -r ${REPO_PATH}/backup.log' -- --all
 	@$(MAKE) git-gc
 	@$(MAKE) prep-archive-path
 	git commit -m "wiped backups"

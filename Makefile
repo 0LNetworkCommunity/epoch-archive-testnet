@@ -144,7 +144,17 @@ check:
 	echo restore-epoch-height: ${RESTORE_EPOCH_HEIGHT}
 
 wipe-backups:
-	cd ${REPO_PATH} && rm -Rf ${ARCHIVE_PATH} && rm -Rf ${REPO_PATH}/genesis && rm -Rf metacache backup.log && git add -A && git commit -m "wipe-backups" && git push
+	cd ${REPO_PATH}
+	rm -rf ${ARCHIVE_PATH} && git filter-branch --index-filter 'git rm --cached --ignore-unmatch -r ${ARCHIVE_PATH}' -- --all
+	rm -rf ${REPO_PATH}/genesis && git filter-branch --index-filter 'git rm --cached --ignore-unmatch -r ${REPO_PATH}/genesis' -- --all
+	rm -rf ${REPO_PATH}/metacache  && git filter-branch --index-filter 'git rm --cached --ignore-unmatch -r ${REPO_PATH}/metacache' -- --all
+	rm -rf ${REPO_PATH}/backup.log  && git filter-branch --index-filter 'git rm --cached --ignore-unmatch -r ${REPO_PATH}/backup.log' -- --all
+	git commit -m "wipe-backups"
+	git push origin --force --all
+	git reflog expire --expire=now --all
+	git gc --prune=now
+	git commit -m "backups gc prune"
+	git push origin --force --all
 
 wipe-db:
 	sudo rm -rf ${DB_PATH}

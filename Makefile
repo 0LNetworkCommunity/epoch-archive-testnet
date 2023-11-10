@@ -197,7 +197,7 @@ backup-version: backup-epoch backup-snapshot backup-transaction
 
 
 restore-init:
-	~/libra-framework/target/release/libra config fullnode-init
+	${SOURCE_PATH}/target/release/libra config fullnode-init
 
 restore-genesis:
 	mkdir -p ${GENESIS_PATH} && cp -f ${REPO_PATH}/genesis/genesis.blob ${GENESIS_PATH}/genesis.blob && cp -f ${REPO_PATH}/genesis/waypoint.txt ${GENESIS_PATH}/waypoint.txt

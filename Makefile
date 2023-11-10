@@ -170,7 +170,7 @@ bins:
 
 sync-repo:
 	# if block added to allow developing on feature branch without the reset to main on every run
-	cd ${REPO_PATH} && git pull && \
+	cd ${REPO_PATH} && git pull origin main && \
 		if [ `git rev-parse --abbrev-ref HEAD` = "main" ]; then \
 			git reset --hard origin/main && git clean -xdf; \
 		fi

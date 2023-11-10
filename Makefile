@@ -1,6 +1,8 @@
 # https://github.com/0LNetworkCommunity/epoch-archive
 # Note: Made for v6.9 > v7.0
 
+-include local.config
+
 SHELL=/usr/bin/env bash
 
 ifndef GIT_ORG
@@ -167,7 +169,12 @@ bins:
 	sudo mkdir -p ${BIN_PATH} && sudo cp -f ${SOURCE_PATH}/target/release/diem-db-tool ${BIN_PATH}/diem-db-tool
 
 sync-repo:
-	cd ${REPO_PATH} && git pull && git reset --hard origin/main && git clean -xdf
+	# if block added to allow developing on feature branch without the reset to main on every run
+	cd ${REPO_PATH} && git pull && \
+		if [ `git rev-parse --abbrev-ref HEAD` = "main" ]; then \
+			git reset --hard origin/main && git clean -xdf; \
+		fi
+#	cd ${REPO_PATH} && git pull && git reset --hard origin/main && git clean -xdf
 
 
 backup-genesis:

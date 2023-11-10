@@ -206,11 +206,11 @@ restore-genesis:
 #   cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool restore bootstrap-db --target-db-dir ${DB_PATH} --metadata-cache-dir ${REPO_PATH}/metacache --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 restore-all: sync-repo wipe-db
-    if [ $(SKIP_INIT) -eq 0 ]; then \
-        make restore-init; \
-    fi
-    make restore-genesis
-    cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool restore bootstrap-db --target-db-dir ${DB_PATH} --metadata-cache-dir ${REPO_PATH}/metacache --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
+	if [ $(SKIP_INIT) -eq 0 ]; then \
+		make restore-init; \
+	fi
+	make restore-genesis
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool restore bootstrap-db --target-db-dir ${DB_PATH} --metadata-cache-dir ${REPO_PATH}/metacache --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 restore-latest: sync-repo wipe-db
 	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool restore bootstrap-db --ledger-history-start-version ${VERSION_START} --target-version ${VERSION} --target-db-dir ${DB_PATH} --metadata-cache-dir ${REPO_PATH}/metacache --command-adapter-config ${REPO_PATH}/epoch-archive.yaml

@@ -66,9 +66,17 @@ ifndef NEXT_EPOCH
 NEXT_EPOCH = $(shell expr ${EPOCH} + 1)
 endif
 
+# ifndef DB_VERSION
+# DB_VERSION := $(shell curl 127.0.0.1:9101/metrics 2> /dev/null | grep "^diem_storage_latest_state_checkpoint_version [0-9]\+" | awk '{print $$2}' | bc)
+# endif
 ifndef DB_VERSION
-DB_VERSION := $(shell curl 127.0.0.1:9101/metrics 2> /dev/null | grep "^diem_storage_latest_state_checkpoint_version [0-9]\+" | awk '{print $$2}' | bc)
+ifeq ($(OVERRIDE_SYNC_PEER_URL),)
+	DB_VERSION := $(shell curl 127.0.0.1:9101/metrics 2> /dev/null | grep "^diem_storage_latest_state_checkpoint_version [0-9]\+" | awk '{print $$2}' | bc)
+else
+	DB_VERSION := $(shell curl $(OVERRIDE_SYNC_PEER_URL):9101/metrics 2> /dev/null | grep "^diem_storage_latest_state_checkpoint_version [0-9]\+" | awk '{print $$2}' | bc)
 endif
+endif
+
 
 GIT_API_BASE = https://api.github.com/repos/${GIT_ORG}/${GIT_REPO}
 BACKUP_INFO ?= $(shell latest_version=0; first_version=0; \

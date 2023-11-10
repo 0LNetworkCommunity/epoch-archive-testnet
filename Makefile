@@ -66,9 +66,6 @@ ifndef NEXT_EPOCH
 NEXT_EPOCH = $(shell expr ${EPOCH} + 1)
 endif
 
-# ifndef DB_VERSION
-# DB_VERSION := $(shell curl 127.0.0.1:9101/metrics 2> /dev/null | grep "^diem_storage_latest_state_checkpoint_version [0-9]\+" | awk '{print $$2}' | bc)
-# endif
 ifndef DB_VERSION
 ifeq ($(OVERRIDE_SYNC_PEER_URL),)
 	DB_VERSION := $(shell curl 127.0.0.1:9101/metrics 2> /dev/null | grep "^diem_storage_latest_state_checkpoint_version [0-9]\+" | awk '{print $$2}' | bc)
@@ -182,8 +179,6 @@ sync-repo:
 		if [ `git rev-parse --abbrev-ref HEAD` = "main" ]; then \
 			git reset --hard origin/main && git clean -xdf; \
 		fi
-#	cd ${REPO_PATH} && git pull && git reset --hard origin/main && git clean -xdf
-
 
 backup-genesis:
 	mkdir -p ${REPO_PATH}/genesis && cp -f ${GENESIS_PATH}/genesis.blob ${REPO_PATH}/genesis/genesis.blob && cp -f ${GENESIS_PATH}/waypoint.txt ${REPO_PATH}/genesis/waypoint.txt
@@ -209,9 +204,6 @@ restore-init:
 
 restore-genesis:
 	mkdir -p ${GENESIS_PATH} && cp -f ${REPO_PATH}/genesis/genesis.blob ${GENESIS_PATH}/genesis.blob && cp -f ${REPO_PATH}/genesis/waypoint.txt ${GENESIS_PATH}/waypoint.txt
-
-# restore-all: sync-repo wipe-db restore-init restore-genesis
-#   cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool restore bootstrap-db --target-db-dir ${DB_PATH} --metadata-cache-dir ${REPO_PATH}/metacache --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 restore-all: sync-repo wipe-db
 	if [ $(SKIP_INIT) -eq 0 ]; then \

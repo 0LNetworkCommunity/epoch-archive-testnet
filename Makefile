@@ -17,6 +17,11 @@ ifndef BIN_PATH
 BIN_PATH=/usr/bin
 endif
 
+ifndef BIN_FILE
+BIN_FILE=diem-db-tool
+endif
+
+
 ifndef SOURCE_PATH
 SOURCE_PATH=~/libra-framework
 endif
@@ -170,8 +175,8 @@ prep-archive-path:
 	mkdir -p ${ARCHIVE_PATH} && cd ${ARCHIVE_PATH}
 
 bins:
-	cd ${SOURCE_PATH} && cargo build -p diem-db-tool --release
-	sudo mkdir -p ${BIN_PATH} && sudo cp -f ${SOURCE_PATH}/target/release/diem-db-tool ${BIN_PATH}/diem-db-tool
+	cd ${SOURCE_PATH} && cargo build -p ${BIN_FILE} --release
+	sudo mkdir -p ${BIN_PATH} && sudo cp -f ${SOURCE_PATH}/target/release/${BIN_FILE} ${BIN_PATH}/${BIN_FILE}
 
 sync-repo:
 	# if block added to allow developing on feature branch without the reset to main on every run
@@ -184,17 +189,17 @@ backup-genesis:
 	mkdir -p ${REPO_PATH}/genesis && cp -f ${GENESIS_PATH}/genesis.blob ${REPO_PATH}/genesis/genesis.blob && cp -f ${GENESIS_PATH}/waypoint.txt ${REPO_PATH}/genesis/waypoint.txt
 
 backup-continuous: prep-archive-path backup-genesis
-	#cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool backup continuously --backup-service-address ${BACKUP_SERVICE_URL}:6186 --state-snapshot-interval-epochs ${BACKUP_EPOCH_FREQ} --transaction-batch-size ${BACKUP_TRANS_FREQ} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
-	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool backup continuously --backup-service-address ${BACKUP_SERVICE_URL}:6186 --state-snapshot-interval-epochs ${BACKUP_EPOCH_FREQ} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
+	#cd ${ARCHIVE_PATH} && ${BIN_PATH}/${BIN_FILE} backup continuously --backup-service-address ${BACKUP_SERVICE_URL}:6186 --state-snapshot-interval-epochs ${BACKUP_EPOCH_FREQ} --transaction-batch-size ${BACKUP_TRANS_FREQ} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/${BIN_FILE} backup continuously --backup-service-address ${BACKUP_SERVICE_URL}:6186 --state-snapshot-interval-epochs ${BACKUP_EPOCH_FREQ} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 backup-epoch: prep-archive-path
-	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool backup oneoff --backup-service-address ${BACKUP_SERVICE_URL}:6186 epoch-ending --start-epoch ${LAST_EPOCH} --end-epoch ${EPOCH_NOW} --target-db-dir ${DB_PATH} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/${BIN_FILE} backup oneoff --backup-service-address ${BACKUP_SERVICE_URL}:6186 epoch-ending --start-epoch ${LAST_EPOCH} --end-epoch ${EPOCH_NOW} --target-db-dir ${DB_PATH} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 backup-snapshot: prep-archive-path
-	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool backup oneoff --backup-service-address ${BACKUP_SERVICE_URL}:6186 state-snapshot --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/${BIN_FILE} backup oneoff --backup-service-address ${BACKUP_SERVICE_URL}:6186 state-snapshot --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 backup-transaction: prep-archive-path
-	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool backup oneoff --backup-service-address ${BACKUP_SERVICE_URL}:6186 transaction --start-version ${VERSION} --num_transactions ${BACKUP_TRANS_FREQ} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/${BIN_FILE} backup oneoff --backup-service-address ${BACKUP_SERVICE_URL}:6186 transaction --start-version ${VERSION} --num_transactions ${BACKUP_TRANS_FREQ} --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 backup-version: backup-epoch backup-snapshot backup-transaction
 
@@ -210,23 +215,23 @@ restore-all: sync-repo wipe-db
 		make restore-init; \
 	fi
 	make restore-genesis
-	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool restore bootstrap-db --target-db-dir ${DB_PATH} --metadata-cache-dir ${REPO_PATH}/metacache --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/${BIN_FILE} restore bootstrap-db --target-db-dir ${DB_PATH} --metadata-cache-dir ${REPO_PATH}/metacache --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 restore-latest: sync-repo wipe-db
-	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool restore bootstrap-db --ledger-history-start-version ${VERSION_START} --target-version ${VERSION} --target-db-dir ${DB_PATH} --metadata-cache-dir ${REPO_PATH}/metacache --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/${BIN_FILE} restore bootstrap-db --ledger-history-start-version ${VERSION_START} --target-version ${VERSION} --target-db-dir ${DB_PATH} --metadata-cache-dir ${REPO_PATH}/metacache --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 restore-not-yet:
 	echo "Not now, but soon. You can play, but be careful!"
 
 restore-epoch: restore-not-yet
-	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool restore oneoff epoch-ending
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/${BIN_FILE} restore oneoff epoch-ending
 
 restore-transaction: restore-not-yet
-	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool restore oneoff transaction
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/${BIN_FILE} restore oneoff transaction
 
 restore-snapshot: restore-not-yet
 	echo "Hint: --restore-mode [default, kv_only, tree_only]"
-	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool restore oneoff state-snapshot 
+	cd ${ARCHIVE_PATH} && ${BIN_PATH}/${BIN_FILE} restore oneoff state-snapshot 
 
 
 git-setup:
@@ -247,7 +252,7 @@ git: git-setup
 	@cd ${REPO_PATH}; \
 	git pull; \
 	git add -A; \
-	git commit -m "diem-db-tool backup continuously"; \
+	git commit -m "${BIN_FILE} backup continuously"; \
 	git push;
 
 git-sling-recent:
@@ -255,7 +260,7 @@ git-sling-recent:
 	files=( $$(ls -td -- * | head -n 20) ); \
 	for ((i=0; i<$${#files[@]}; i+=20)); do \
 		git add "$${files[@]:i:20}"; \
-		git commit -m "batch from diem-db-tool backup continuously"; \
+		git commit -m "batch from ${BIN_FILE} backup continuously"; \
 		git push; \
 	done
 
@@ -269,30 +274,30 @@ git-sling-all:
 		for file in $$files; do \
 			git add "$$file"; \
 		done; \
-		git commit -m "batch from diem-db-tool backup continuously"; \
+		git commit -m "batch from ${BIN_FILE} backup continuously"; \
 		git push; \
 	done
 
 start-continuous:
 	@cd ${REPO_PATH}; \
-	ps aux | grep "diem-db-tool backup continuously" | grep -v "grep" > /dev/null; \
+	ps aux | grep "${BIN_FILE} backup continuously" | grep -v "grep" > /dev/null; \
 	ps_exit_status=$$?; \
 	if [ $$ps_exit_status -ne 0 ]; then \
-		echo "Starting Continuous Backup via diem-db-tool..."; \
+		echo "Starting Continuous Backup via ${BIN_FILE}..."; \
 		cd ${REPO_PATH} && make backup-continuous >> ${REPO_PATH}/backup.log 2>&1 & \
 	else \
-		echo "diem-db-tool is already running"; \
+		echo "${BIN_FILE} is already running"; \
 	fi
 
 stop-continuous:
 	@cd ${REPO_PATH}; \
-	ps aux | grep "diem-db-tool backup continuously" | grep -v "grep" > /dev/null; \
+	ps aux | grep "${BIN_FILE} backup continuously" | grep -v "grep" > /dev/null; \
 	ps_exit_status=$$?; \
 	if [ $$ps_exit_status -ne 0 ]; then \
-		echo "Stopping Continuous Backup via diem-db-tool..."; \
-		pkill -f "diem-db-tool backup continuously"; \
+		echo "Stopping Continuous Backup via ${BIN_FILE}..."; \
+		pkill -f "${BIN_FILE} backup continuously"; \
 	else \
-		echo "diem-db-tool is not running"; \
+		echo "${BIN_FILE} is not running"; \
 	fi
 
 log-cleanup:

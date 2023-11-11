@@ -1,6 +1,8 @@
 # https://github.com/0LNetworkCommunity/epoch-archive
 # Note: Made for v6.9 > v7.0
 
+-include local.config
+
 SHELL=/usr/bin/env bash
 
 ifndef GIT_ORG
@@ -65,8 +67,13 @@ NEXT_EPOCH = $(shell expr ${EPOCH} + 1)
 endif
 
 ifndef DB_VERSION
-DB_VERSION := $(shell curl 127.0.0.1:9101/metrics 2> /dev/null | grep "^diem_storage_latest_state_checkpoint_version [0-9]\+" | awk '{print $$2}' | bc)
+ifeq ($(OVERRIDE_SYNC_PEER_URL),)
+	DB_VERSION := $(shell curl 127.0.0.1:9101/metrics 2> /dev/null | grep "^diem_storage_latest_state_checkpoint_version [0-9]\+" | awk '{print $$2}' | bc)
+else
+	DB_VERSION := $(shell curl $(OVERRIDE_SYNC_PEER_URL):9101/metrics 2> /dev/null | grep "^diem_storage_latest_state_checkpoint_version [0-9]\+" | awk '{print $$2}' | bc)
 endif
+endif
+
 
 GIT_API_BASE = https://api.github.com/repos/${GIT_ORG}/${GIT_REPO}
 BACKUP_INFO ?= $(shell latest_version=0; first_version=0; \
@@ -167,8 +174,11 @@ bins:
 	sudo mkdir -p ${BIN_PATH} && sudo cp -f ${SOURCE_PATH}/target/release/diem-db-tool ${BIN_PATH}/diem-db-tool
 
 sync-repo:
-	cd ${REPO_PATH} && git pull && git reset --hard origin/main && git clean -xdf
-
+	# if block added to allow developing on feature branch without the reset to main on every run
+	cd ${REPO_PATH} && git pull origin main && \
+		if [ `git rev-parse --abbrev-ref HEAD` = "main" ]; then \
+			git reset --hard origin/main && git clean -xdf; \
+		fi
 
 backup-genesis:
 	mkdir -p ${REPO_PATH}/genesis && cp -f ${GENESIS_PATH}/genesis.blob ${REPO_PATH}/genesis/genesis.blob && cp -f ${GENESIS_PATH}/waypoint.txt ${REPO_PATH}/genesis/waypoint.txt
@@ -190,12 +200,16 @@ backup-version: backup-epoch backup-snapshot backup-transaction
 
 
 restore-init:
-	~/libra-framework/target/release/libra config fullnode-init
+	${SOURCE_PATH}/target/release/libra config fullnode-init
 
 restore-genesis:
 	mkdir -p ${GENESIS_PATH} && cp -f ${REPO_PATH}/genesis/genesis.blob ${GENESIS_PATH}/genesis.blob && cp -f ${REPO_PATH}/genesis/waypoint.txt ${GENESIS_PATH}/waypoint.txt
 
-restore-all: sync-repo wipe-db restore-init restore-genesis
+restore-all: sync-repo wipe-db
+	if [ $(SKIP_INIT) -eq 0 ]; then \
+		make restore-init; \
+	fi
+	make restore-genesis
 	cd ${ARCHIVE_PATH} && ${BIN_PATH}/diem-db-tool restore bootstrap-db --target-db-dir ${DB_PATH} --metadata-cache-dir ${REPO_PATH}/metacache --command-adapter-config ${REPO_PATH}/epoch-archive.yaml
 
 restore-latest: sync-repo wipe-db

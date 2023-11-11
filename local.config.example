@@ -1,0 +1,4 @@
+# SOURCE_PATH=/home/user/some-other-path/0l/libra-framework
+# REPO_PATH=/home/user/some-other-path/0l/epoch-archive-testnet
+# SKIP_INIT=1 # Skips account initialization
+# OVERRIDE_SYNC_PEER_URL=some.ip.of.peer
